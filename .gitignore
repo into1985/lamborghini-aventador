@@ -1,0 +1,10 @@
+# Working files — not part of the site
+.claude/
+AGENTS.md
+PROGRESS.md
+convert-images.js
+_demo/
+node_modules/
+.DS_Store
+Thumbs.db
+desktop.ini
