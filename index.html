@@ -327,9 +327,6 @@ html.gsap-js .hero__title-inner{opacity:0}
 .cover--l,.cover--r{top:0;bottom:0;width:50.2%}
 .cover--l{left:0}
 .cover--r{right:0}
-.cover--t,.cover--b{left:0;right:0;height:50.2%}
-.cover--t{top:0}
-.cover--b{bottom:0}
 
 /* ============================================================
    DESIGN — 03 · Diptych + text column (variant D2)
@@ -1068,7 +1065,7 @@ body.chrome-burger-light .brandbar__menu{color:var(--base)}
         <h2 class="h2" id="thisex-h">One owner. Every service recorded.</h2>
         <p class="thisex__lead">Registered in 2016 and driven 3,466 miles since.</p>
       </div>
-      <figure class="thisex__photo"><img src="images/content/this-example.webp" alt="Grigio Estoque paint surface in low light"><div class="cover cover--t" aria-hidden="true"></div><div class="cover cover--b" aria-hidden="true"></div></figure>
+      <figure class="thisex__photo"><img src="images/content/this-example.webp" alt="Grigio Estoque paint surface in low light"><div class="cover cover--l" aria-hidden="true"></div><div class="cover cover--r" aria-hidden="true"></div></figure>
       <ol class="rec">
           <li><span class="rec-when">2016</span><span class="rec-what">Pre-delivery inspection, 18 miles: Lancaster Sevenoaks</span></li>
           <li><span class="rec-when">2017</span><span class="rec-what">Annual service and 1,500-mile check, 1,513 miles: Lancaster Sevenoaks</span></li>
@@ -2104,7 +2101,7 @@ body.chrome-burger-light .brandbar__menu{color:var(--base)}
     });
   })();
 
-  /* ---- This Example (portrait plate top/bottom + head + service record rows) ---- */
+  /* ---- This Example (portrait plate left/right + head + service record rows) ---- */
   (function(){
     var sec = document.querySelector('.thisex'); if(!sec) return;
     var headChars = splitToChars(sec.querySelector('.thisex__head .h2'));
@@ -2112,14 +2109,14 @@ body.chrome-burger-light .brandbar__menu{color:var(--base)}
     var recRows = Array.prototype.slice.call(sec.querySelectorAll('.rec li'));
     var proseLines = []; sec.querySelectorAll('.thisex__prose .body-p').forEach(function(el){ splitToLines(el).forEach(function(l){ proseLines.push(l); }); });
     var img = sec.querySelector('.thisex__photo img');
-    var coverT = sec.querySelector('.cover--t'), coverB = sec.querySelector('.cover--b');
-    if(reduce){ gsap.set([headChars,leadLines,recRows,proseLines],{opacity:1}); gsap.set(coverT,{yPercent:-101}); gsap.set(coverB,{yPercent:101}); return; }
+    var coverL = sec.querySelector('.cover--l'), coverR = sec.querySelector('.cover--r');
+    if(reduce){ gsap.set([headChars,leadLines,recRows,proseLines],{opacity:1}); gsap.set(coverL,{xPercent:-101}); gsap.set(coverR,{xPercent:101}); return; }
     gsap.set([headChars,leadLines,proseLines],{opacity:0}); gsap.set(recRows,{opacity:0});
-    gsap.set(coverT,{yPercent:0}); gsap.set(coverB,{yPercent:0}); gsap.set(img,{scale:1.06});
+    gsap.set(coverL,{xPercent:0}); gsap.set(coverR,{xPercent:0}); gsap.set(img,{scale:1.06});
     onEnter(sec, function(){
       var tl = gsap.timeline({defaults:{ease:'power2.out'}});
-      tl.to(coverT,{yPercent:-101,duration:1.1,ease:'expo.inOut'},0)
-        .to(coverB,{yPercent:101,duration:1.1,ease:'expo.inOut'},0)
+      tl.to(coverL,{xPercent:-101,duration:1.1,ease:'expo.inOut'},0)
+        .to(coverR,{xPercent:101,duration:1.1,ease:'expo.inOut'},0)
         .to(img,{scale:1,duration:1.3,ease:'power2.out'},0);
       tl.to(headChars,{opacity:1,duration:.5,stagger:.022},0.4);
       lineFade(tl, leadLines, 0.58);
