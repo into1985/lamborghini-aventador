@@ -887,13 +887,17 @@ body.chrome-burger-light .brandbar__menu{color:var(--base)}
 }
 
 </style>
-<!-- Vercel Web Analytics (static site: two tags, no npm). Path is Vercel-proxied;
-     /_vercel/insights/script.js 404s locally — normal. Enable in the Vercel
-     project dashboard (Analytics tab) for data to collect. -->
+<!-- Vercel Web Analytics — loads only on the production domain (same pattern as Kala). -->
 <script>
+(function () {
+  if (window.location.hostname !== 'lamborghini-aventador.inzain.org') return;
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  var script = document.createElement('script');
+  script.src = '/_vercel/insights/script.js';
+  script.async = true;
+  document.head.appendChild(script);
+})();
 </script>
-<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 
