@@ -398,7 +398,7 @@ html.gsap-js .hero__title-inner{opacity:0}
 .audio__inner .eyebrow{margin:clamp(2.5rem,3vw,3rem) 0 0}
 .audio__line{
   font-family:var(--mono);font-weight:400;line-height:1.3;letter-spacing:-.005em;
-  font-size:clamp(1.45rem,3.2vw,2.6rem);margin:0;max-width:24ch;color:var(--ink);
+  font-size:clamp(1.25rem,3.2vw,2.6rem);margin:0;max-width:24ch;color:var(--ink);
 }
 .es-viz-wrap{
   position:relative;width:min(100%,760px);height:7.5rem;
@@ -498,6 +498,10 @@ html.gsap-js .hero__title-inner{opacity:0}
 .spec{
   padding-block:clamp(4.5rem,11vh,8rem);
 }
+/* mobile: both neighbours (This Example, Gallery) are light + padded, so the shared section
+   padding reads as a doubled empty band around this all-text section — drop spec's own so the
+   gap is a single neighbour's padding. Desktop keeps the extra air. */
+@media (max-width:560px){ .spec{padding-block:0} }
 .spec__head{margin-bottom:clamp(0rem,0vw,0rem)}
 .spec__head .h2{max-width:18ch}
 .spec__grid{
@@ -524,6 +528,9 @@ html.gsap-js .hero__title-inner{opacity:0}
 @media(min-width:760px){.spec__summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:1300px){.spec__summary{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .spec__more{margin-top:2.5rem;}
+/* mobile single-column: match the "more" block's top gap to the normal inter-group gap
+   (desktop keeps margin-top + grid padding-top to separate the two multicol blocks) */
+@media (max-width:759px){ .spec__more{margin-top:0;padding-top:clamp(1.9rem,3vw,2.7rem)} }
 .spec__more[hidden],.spec__toggle[hidden]{display:none}
 .spec__toggle{margin-top:2.5rem;min-width:0;min-height:44px;gap:1rem;padding:.65rem 1rem;
   background:transparent;color:var(--ink);border-color:var(--line);font-size:1rem;font-weight:650;text-align:left}
@@ -592,7 +599,7 @@ html.gsap-js .hero__title-inner{opacity:0}
 .video__inner .eyebrow{margin:clamp(2.5rem,3vw,3rem) 0 0}
 .video__line{
   font-family:var(--mono);font-weight:400;line-height:1.3;letter-spacing:-.005em;
-  font-size:clamp(1.45rem,3.2vw,2.6rem);margin:0;max-width:23ch;color:var(--ink);
+  font-size:clamp(1.25rem,3.2vw,2.6rem);margin:0;max-width:23ch;color:var(--ink);
 }
 .video__control{display:flex;align-items:center;justify-content:center;min-height:7.5rem;margin-top:.5rem;
   background:none;border:0;padding:0;cursor:pointer;width:66px}
@@ -642,7 +649,7 @@ html.gsap-js .hero__title-inner{opacity:0}
 /* small screens: footer flows below the content (not absolute) so it can never sit under the CTA/copyright collision — the footer height is unknown when it wraps */
 @media (max-width:560px){
   .close__content{padding-bottom:clamp(2.25rem,7vh,3.5rem)}
-  .close__footer{position:relative;bottom:auto;z-index:3;padding-top:0}
+  .close__footer{position:relative;bottom:auto;z-index:3;padding-top:0;flex-direction:column;align-items:center;text-align:center}
 }
 
 /* ============================================================
@@ -800,7 +807,6 @@ html.gsap-js .hero__title-inner{opacity:0}
 @media (max-width:560px){
   .fhw__panel{position:fixed;inset:0;width:100%;height:100dvh;max-height:none;transform:translateY(16px);border:0;box-shadow:none}
   #fhw[data-open] .fhw__panel{transform:none}
-  .fhw__close{display:inline-flex}
 }
 
 /* ============================================================
@@ -1707,7 +1713,7 @@ body.chrome-burger-light .brandbar__menu{color:var(--base)}
     fhwBackdrop.setAttribute('data-open','');
     fhw.setAttribute('data-open',''); fhwBtn.setAttribute('aria-expanded','true');
     fhwBtn.setAttribute('aria-label','Close questions'); fhwPanel.setAttribute('aria-hidden','false');
-    syncFhwMode(); fhwPanel.querySelector(mqMobile.matches ? '.fhw__close' : '.fhw__q').focus();
+    syncFhwMode(); fhwPanel.querySelector('.fhw__q').focus();
   }
   function closeFhw(){
     if (!fhw.hasAttribute('data-open')) return;
@@ -1718,18 +1724,19 @@ body.chrome-burger-light .brandbar__menu{color:var(--base)}
     syncFhwMode(); if (restoreFocus) fhwBtn.focus();
     fhwPanel.inert = true;
   }
-  var heroIn = true, closingIn = false;
+  var heroIn = true, closingIn = false, galleryReached = false;
   function updateFhw(){
     if (!fhw) return;
-    var hide = heroIn || closingIn || body.classList.contains('is-menu-open') || (modal && modal.hasAttribute('data-open'));
+    // on mobile the floating button sits over the gallery rail's nav arrows — hide it from the gallery onward
+    var hide = heroIn || closingIn || (mqMobile.matches && galleryReached) || body.classList.contains('is-menu-open') || (modal && modal.hasAttribute('data-open'));
     if (hide){ closeFhw(); fhw.classList.add('is-hidden'); }
     else fhw.classList.remove('is-hidden');
   }
   if (fhw && fhwBtn){
     fhwBackdrop.addEventListener('click', closeFhw);
     mqMobile.addEventListener('change', function(){
-      syncFhwMode();
-      if (fhw.hasAttribute('data-open')) fhwPanel.querySelector(mqMobile.matches ? '.fhw__close' : '.fhw__q').focus();
+      syncFhwMode(); updateFhw();
+      if (fhw.hasAttribute('data-open')) fhwPanel.querySelector('.fhw__q').focus();
     });
     fhw.addEventListener('keydown', function(e){
       if (!fhw.hasAttribute('data-open')) return;
@@ -1746,9 +1753,11 @@ body.chrome-burger-light .brandbar__menu{color:var(--base)}
       });
     });
     if ('IntersectionObserver' in window){
-      var hero = document.getElementById('top'), closing = document.getElementById('enquire');
+      var hero = document.getElementById('top'), closing = document.getElementById('enquire'), gallerySec = document.getElementById('gallery');
       if (hero) new IntersectionObserver(function(es){ heroIn = es[0].isIntersecting; updateFhw(); }, { threshold: 0.12 }).observe(hero);
       if (closing) new IntersectionObserver(function(es){ closingIn = es[0].isIntersecting; updateFhw(); }, { threshold: 0.12 }).observe(closing);
+      // gallery reached = gallery in view OR already scrolled past (top above viewport) → stays true through video + closing (mobile-only hide)
+      if (gallerySec) new IntersectionObserver(function(es){ galleryReached = es[0].isIntersecting || es[0].boundingClientRect.top <= 0; updateFhw(); }, { threshold: 0 }).observe(gallerySec);
     }
     fhw.classList.add('is-hidden');
   }
